@@ -4,7 +4,7 @@
 >
 > **Working systems in scope:** Atlas (including Poseidon), EarthNet, ARCUS, Prometheus, and Oracle.
 >
-> **Supporting repositories in scope:** DoWhy, causal-learn, PySTAC Client, GeoPandas, Pyro, and Agent Reach.
+> **Supporting repositories in scope:** DoWhy, causal-learn, PySTAC Client, GeoPandas, Pyro, Agent Reach, NeuralForecast, TimesFM, and ContentMachine.
 >
 > **Oracle** is the internal name for the Pythology fork of God's Eye View. Oracle is a private situational-awareness, spatial-fusion, and visualisation surface. It is not the source of truth for third-party data.
 
@@ -142,12 +142,14 @@ EarthNet should use PySTAC Client for catalogue discovery and GeoPandas for spat
 
 ARCUS should remain focused on change, state, pattern and anomaly context rather than duplicating the full spatial stack.
 
-Likely contributions from the six supporting repos:
+Likely contributions from the supporting repos:
 
 - GeoPandas for spatialising changes/anomalies;
 - causal-learn for candidate dependency structure;
 - DoWhy for testing whether a proposed relationship survives causal checks;
 - Pyro for uncertain / latent state inference;
+- NeuralForecast for trained specialist forecasts over Pythology time series;
+- TimesFM for generalist / zero-shot benchmark forecasts and multivariate forecasting experiments;
 - Agent Reach for tightly scoped external corroboration when an evidence gap exists.
 
 ### Prometheus
@@ -167,6 +169,16 @@ Primary responsibilities:
 - mechanism scoring and learning.
 
 Prometheus should not blindly trust any one supporting library. Each library contributes a type of evidence or reasoning primitive.
+
+Forecasting should be treated as a **multi-witness system** rather than a single model output:
+
+- NeuralForecast supplies trained specialist models;
+- TimesFM supplies a strong generalist / zero-shot comparison where licensing permits;
+- causal-learn and DoWhy address causal structure/effect questions;
+- Pyro carries probabilistic uncertainty and latent-state beliefs;
+- Prometheus compares, scores, resolves and learns from all of them against real outcomes.
+
+A predictive hit does not prove a causal mechanism, and a causal story does not guarantee a good forecast. Prometheus should keep those ledgers related but distinct.
 
 ### Oracle
 
@@ -358,6 +370,118 @@ Agent Reach fetches the evidence. It does **not** buy the pie.
 
 ---
 
+## NeuralForecast
+
+**Role:** trainable specialist neural forecasting suite.
+
+Current fork baseline inspected: NeuralForecast 3.2.2, Apache-2.0, Python >=3.10.
+
+Strengthens:
+
+- **Prometheus:** creates specialised forecasting witnesses for recurring Pythology signals and lets Prometheus compare model families rather than trusting one forecaster.
+- **EarthNet:** environmental time-series forecasting using historic targets plus weather, solar, oceanic or other exogenous variables.
+- **ARCUS:** forecast whether an observed state/change pattern is likely to continue, reverse or transition.
+- **Atlas / Poseidon:** operational forecasting for local environmental, agricultural, road or maritime series where sufficient training history exists.
+
+Useful model families include N-BEATS/N-HiTS, DeepAR, TFT, PatchTST, iTransformer and others. NeuralForecast also supports exogenous variables, probabilistic outputs, quantile/distribution losses and automated model selection.
+
+Desired role:
+
+```text
+Pythology historical series + known covariates
+        ->
+one or more trained specialist models
+        ->
+point + probabilistic forecasts
+        ->
+Prometheus forecast ledger
+        ->
+outcome resolution / per-model calibration
+```
+
+NeuralForecast models should compete on resolved Pythology events. Their value is earned through calibration and out-of-sample performance, not model reputation.
+
+---
+
+## TimesFM
+
+**Role:** pretrained generalist time-series foundation model used as an independent forecasting witness and benchmark.
+
+The current upstream line includes TimesFM 3.0 with native multivariate forecasting and past-only / past-and-future covariates.
+
+Strengthens:
+
+- **Prometheus:** provides a generalist forecast to compare against trained NeuralForecast specialists and Prometheus mechanism-derived expectations.
+- **EarthNet:** rapid forecasting experiments over new environmental series without first training a bespoke model.
+- **ARCUS:** zero-shot / low-setup comparison forecasts for newly detected patterns.
+- **Atlas / Poseidon:** fast baseline forecasts for operational and maritime series before enough local history exists for a specialist model.
+
+Important licensing boundary:
+
+- TimesFM **source code** is Apache-2.0.
+- Upstream states that pretrained weights through **2.5** remain Apache-2.0.
+- Upstream currently distributes **TimesFM 3.0 pretrained weights under a separate non-commercial, non-production licence**.
+- Therefore TimesFM 3.0 weights are a **lab/research instrument only** unless their licence changes or Pythology obtains appropriate rights.
+- Production/commercial experiments must use a model/checkpoint whose rights explicitly permit the intended use.
+
+Desired relationship:
+
+```text
+TimesFM generalist forecast
+          +
+NeuralForecast specialist forecasts
+          +
+Prometheus mechanism forecast
+          ->
+forecast tournament
+          ->
+resolved outcome
+          ->
+per-model + per-mechanism scoring / calibration
+```
+
+TimesFM should never silently become the production default merely because it is a foundation model.
+
+---
+
+## ContentMachine
+
+**Role:** demonstration, communications and event-replay production pipeline. It is **not an intelligence source**.
+
+Current fork baseline inspected: Apache-2.0 Node/React pipeline for story planning, scene generation, images, video, narration, project state and export.
+
+Potential Pythology use:
+
+- turn a completed Prometheus event lifecycle into an understandable cinematic replay;
+- build investor / government demonstration packages from real Pythology evidence;
+- assemble Atlas, EarthNet and Oracle captures with Prometheus timestamps, hypotheses, forecasts and resolved outcomes;
+- preserve scene/project versions so a demonstration can be regenerated when underlying evidence or visual assets change;
+- automate narration, scene sequencing and export without contaminating the analytical systems.
+
+Example:
+
+```text
+resolved EVENT_ID
+   ->
+timeline + provenance-approved evidence
+   ->
+Atlas / EarthNet / Oracle captures
+   ->
+Prometheus hypothesis + forecast + outcome narrative
+   ->
+ContentMachine-derived production workflow
+   ->
+human-reviewed documentary / investor replay
+```
+
+Boundary:
+
+ContentMachine consumes **approved outputs** from Gaia/Pythology. It cannot create evidence, revise Prometheus history, or turn generated media into factual source material.
+
+Its current credential architecture must also be reviewed before adoption; Pythology should not inherit browser/localStorage secret handling without a security redesign.
+
+---
+
 ## 6. Target “Check this out” workflow
 
 The long-term showcase workflow:
@@ -404,11 +528,17 @@ planetary context   local/ops    state/change
                v
 5. GeoPandas builds deterministic spatial relationships.
                |
-               v
-6. causal-learn may propose competing structures.
-               |
-               v
-7. Prometheus declares explicit competing mechanisms.
+               +-----------------------------+
+               |                             |
+               v                             v
+6A. Forecasting witnesses run:         6B. causal-learn may
+    - NeuralForecast specialists           propose competing structures
+    - TimesFM generalist where lawful
+               |                             |
+               +--------------+--------------+
+                              |
+                              v
+7. Prometheus declares explicit competing mechanisms and forecast expectations.
                |
                v
 8. DoWhy tests estimable causal claims / refutations.
@@ -417,18 +547,30 @@ planetary context   local/ops    state/change
 9. Pyro propagates uncertainty / latent-state probabilities.
                |
                v
-10. Prometheus updates:
+10. Prometheus compares:
+    - mechanism-derived expectation
+    - NeuralForecast outputs
+    - TimesFM output where permitted
+    - observed evidence
+               |
+               v
+11. Prometheus updates:
     - hypothesis
     - confidence
     - forecast
     - Decision Futures
     - evidence ledger
+    - forecast/model tournament state
                |
                v
-11. Atlas, EarthNet and Oracle update around the SAME EVENT_ID.
+12. Atlas, EarthNet and Oracle update around the SAME EVENT_ID.
                |
                v
-12. Later outcome is linked back to the entire lifecycle.
+13. Later outcome is linked back to the entire lifecycle and scores models/mechanisms.
+               |
+               v
+14. If useful, ContentMachine can turn the resolved, provenance-approved lifecycle
+    into a human-reviewed demonstration/replay.
 ```
 
 The visual experience may be dramatic. The data model underneath it must remain boring, deterministic and traceable.
@@ -521,7 +663,10 @@ The event should drive the camera state; the camera state must never become the 
 - DoWhy + causal-learn in one Python 3.12 causal lab.
 - PySTAC Client + GeoPandas in one Python 3.12 geospatial lab.
 - Pyro in a dedicated Python 3.12 probabilistic lab.
+- NeuralForecast in a forecasting lab for specialist model tournaments.
+- TimesFM in the forecasting lab as a generalist benchmark, with checkpoints gated by licence.
 - Agent Reach in a separately sandboxed environment.
+- ContentMachine in a separate presentation/replay lab with no authority over intelligence state.
 - Oracle remains private and isolated while its useful adapters/algorithms are audited.
 
 ### Phase B — shared evidence primitives
@@ -549,6 +694,7 @@ Allow Prometheus to request:
 - a spatial relationship calculation;
 - a causal test;
 - a probabilistic update;
+- one or more specialist/generalist time-series forecasts;
 - a constrained evidence-gathering task.
 
 Every request and response should be ledgered.
@@ -565,6 +711,9 @@ Atlas, EarthNet and Oracle subscribe to shared focus events and coordinate their
 - Do not give Agent Reach unrestricted internet + credentials + shell + purchasing authority.
 - Do not let causal-learn silently rewrite Prometheus mechanisms.
 - Do not let Pyro probabilities masquerade as causal validity.
+- Do not let forecast accuracy masquerade as proof of a causal mechanism.
+- Do not deploy TimesFM 3.0 pretrained weights commercially/into production while their upstream licence prohibits that use.
+- Do not let ContentMachine-generated narration, imagery or video become evidence or rewrite the factual ledger.
 - Do not ingest imagery merely because PySTAC can find it; preserve quality/licence/cost filters.
 - Do not perform browser-only spatial calculations when deterministic backend calculations should exist.
 - Do not merge evidence from different licences into a derived database without understanding the obligations.
@@ -614,9 +763,12 @@ Atlas, EarthNet and Oracle subscribe to shared focus events and coordinate their
                   shared evidence
 
 Supporting reasoning:
-causal-learn -> candidate structures
-DoWhy       -> causal tests/refutations
-Pyro        -> uncertainty/latent states
+causal-learn   -> candidate structures
+DoWhy          -> causal tests/refutations
+NeuralForecast -> trained specialist forecasts
+TimesFM        -> generalist / zero-shot forecast benchmark
+Pyro           -> uncertainty/latent states
+ContentMachine -> human-facing replay after evidence is resolved
 ```
 
 ---
@@ -630,7 +782,8 @@ We know this architecture is working when Prometheus can identify an event and e
 - **Poseidon:** what is happening in the maritime dimension?
 - **ARCUS:** what changed, and is the change unusual?
 - **Oracle:** what physical entities, sensors and infrastructure surround it right now?
-- **Prometheus:** what mechanism best explains the evidence, what alternatives remain, what happens next, and how uncertain are we?
+- **Prometheus:** what mechanism best explains the evidence, what alternatives remain, what happens next, how uncertain are we, and which forecasting/mechanism witnesses are actually calibrated?
+- **ContentMachine (downstream only):** how do we explain the resolved event lifecycle clearly and spectacularly to a human without altering the evidence?
 
 The war-room spectacle is the visible result.
 
