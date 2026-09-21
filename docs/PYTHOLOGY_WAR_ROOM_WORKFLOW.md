@@ -4,7 +4,7 @@
 >
 > **Working systems in scope:** Atlas (including Poseidon), EarthNet, ARCUS, Prometheus, and Oracle.
 >
-> **Supporting repositories in scope:** DoWhy, causal-learn, PySTAC Client, GeoPandas, Pyro, Agent Reach, NeuralForecast, TimesFM, ContentMachine, and the Pythology-hardened Grok Build fork as the candidate agent-runtime/orchestration layer.
+> **Supporting repositories in scope:** DoWhy, causal-learn, PySTAC Client, GeoPandas, Pyro, Agent Reach, NeuralForecast, TimesFM, ContentMachine, and **Hermes** — the Pythology-hardened Grok Build fork — as the candidate agent-runtime/orchestration layer.
 >
 > **Oracle** is the internal name for the Pythology fork of God's Eye View. Oracle is a private situational-awareness, spatial-fusion, and visualisation surface. It is not the source of truth for third-party data.
 
@@ -25,7 +25,7 @@ That single event should be able to cause the connected systems to react around 
 3. **ARCUS** surfaces relevant state/change/anomaly context.
 4. **Oracle** assembles the live physical-world picture around the event: aircraft, vessels, satellites, fires, roads, infrastructure, public sensors/cameras and other lawful contextual feeds.
 5. **Prometheus** reasons over the combined evidence, mechanisms, alternatives, uncertainty and outcomes.
-6. **The Pythology Agent Runtime** receives scoped tasks from Prometheus and dispatches them to isolated specialist workers with explicit tools, permissions, context and output contracts.
+6. **Hermes** receives scoped tasks from Prometheus and dispatches them to isolated specialist workers with explicit tools, permissions, context and output contracts.
 7. **Agent Reach**, when explicitly asked for an evidence gap, performs a constrained public-information retrieval task through that runtime and returns provenance-bearing evidence. It does **not** perform purchases, account changes, arbitrary execution, unrestricted browsing with credentials, or other side effects.
 
 The visual target is intentional: Atlas, EarthNet and Oracle may all show globes, but each globe is a different instrument.
@@ -200,9 +200,23 @@ Primary responsibilities:
 
 Oracle is **not** authoritative simply because something appears on the globe.
 
-### Pythology Agent Runtime
+### Hermes
 
-The hardened Grok Build fork is the leading candidate for the **agent-runtime / orchestration fabric** connecting Prometheus to specialist capabilities.
+**Identity:** Hermes is the god of connections in the Pythology / Gaia architecture.
+
+He carries bounded requests between systems, dispatches specialist workers, and returns evidence/results to Prometheus. Hermes does not decide what is true, does not own the event ledger, and does not become the permanent system bus.
+
+Conceptually:
+
+```text
+Prometheus decides what needs investigating.
+Hermes decides how to route and execute the investigation safely.
+Specialists perform the work.
+The shared evidence/event layer preserves the result.
+Prometheus reasons over the result.
+```
+
+**Hermes** is the hardened Grok Build fork and the leading candidate for the **agent-runtime / orchestration fabric** connecting Prometheus to specialist capabilities.
 
 It is not another intelligence system and it is not the shared data bus.
 
@@ -224,7 +238,7 @@ Desired relationship:
                    reason / choose tasks
                            |
                            v
-                 Pythology Agent Runtime
+                 Hermes
                    scope / isolate / run
                            |
        +-------------------+--------------------+
@@ -378,7 +392,7 @@ Prometheus reasoning + ledger
 
 ---
 
-## Pythology-hardened Grok Build
+## Hermes (Pythology-hardened Grok Build)
 
 **Role:** agent harness / execution and orchestration runtime.
 
@@ -574,7 +588,7 @@ The long-term showcase workflow:
 2. A shared EVENT_ID is published with geometry, time, confidence and provenance.
                |
                v
-3. Prometheus asks the Pythology Agent Runtime for bounded investigation tasks.
+3. Prometheus asks the Hermes for bounded investigation tasks.
    The runtime creates isolated workers with only the required capabilities.
                |
       +--------+---------+---------+
@@ -772,7 +786,7 @@ Build / standardise:
 
 Let the supporting tools enrich copied/test events without changing production state.
 
-Introduce the Pythology Agent Runtime here as a **read-only orchestration fabric**:
+Introduce the Hermes here as a **read-only orchestration fabric**:
 - Prometheus may submit scoped jobs;
 - workers receive only explicit capabilities;
 - every request/result is attached to an EVENT_ID / hypothesis ID;
@@ -781,7 +795,7 @@ Introduce the Pythology Agent Runtime here as a **read-only orchestration fabric
 
 ### Phase D — Prometheus-assisted requests
 
-Allow Prometheus to submit typed tasks through the Agent Runtime:
+Allow Prometheus to submit typed tasks through the Hermes:
 
 - an EO search;
 - a spatial relationship calculation;
@@ -800,7 +814,7 @@ Atlas, EarthNet and Oracle subscribe to shared focus events and coordinate their
 
 ## 11. Things we should deliberately not do
 
-- Do not turn the Agent Runtime into the authoritative event bus or source of truth.
+- Do not turn the Hermes into the authoritative event bus or source of truth.
 - Do not let workers inherit the parent process's full filesystem, environment, network or credential set.
 - Do not turn Oracle into another source-of-truth backend.
 - Do not give Agent Reach unrestricted internet + credentials + shell + purchasing authority.
@@ -827,7 +841,7 @@ Atlas, EarthNet and Oracle subscribe to shared focus events and coordinate their
                                     |
                                     v
                          +-------------------+
-                         |  AGENT RUNTIME    |
+                         |  HERMES    |
                          | scope/isolate/run |
                          +---------+---------+
                                    |
@@ -886,7 +900,7 @@ We know this architecture is working when Prometheus can identify an event and e
 - **Poseidon:** what is happening in the maritime dimension?
 - **ARCUS:** what changed, and is the change unusual?
 - **Oracle:** what physical entities, sensors and infrastructure surround it right now?
-- **Pythology Agent Runtime:** which bounded worker/tool should answer the next question, and can it do so without receiving unnecessary privilege?
+- **Hermes:** which bounded worker/tool should answer the next question, and can it do so without receiving unnecessary privilege?
 - **Prometheus:** what mechanism best explains the evidence, what alternatives remain, what happens next, how uncertain are we, and which forecasting/mechanism witnesses are actually calibrated?
 - **ContentMachine (downstream only):** how do we explain the resolved event lifecycle clearly and spectacularly to a human without altering the evidence?
 
